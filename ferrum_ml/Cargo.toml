@@ -1,0 +1,15 @@
+[package]
+name        = "ferrum_ml"
+description = "Tabular MLP classification/regression on the zero-dependency ferrum engine."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "train_cli"
+path = "src/bin/train_cli.rs"
+
+[dependencies]
+# Shared engine (tensors, layers, optimizers, FINF model files) from the
+# sibling SLM repo.
+ferrum_core = { path = "../../ferrum/ferrum_core" }
