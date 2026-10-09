@@ -3,6 +3,8 @@
 //! `TabularModel` loads a FINF model trained by `train_cli` and predicts from a
 //! row of raw feature values (the stored normalizer is applied internally).
 
+#![forbid(unsafe_code)]
+
 use ferrum_core::{argmax_rows, from_bytes, TaskType};
 use wasm_bindgen::prelude::*;
 

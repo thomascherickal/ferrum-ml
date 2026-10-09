@@ -10,6 +10,8 @@
 //!   train_cli datasets/tabular/titanic.csv   models/titanic/model.bin   "Titanic"     32  500
 //!   train_cli datasets/tabular/housing.csv   models/housing/model.bin   "Housing"     64  400
 
+#![forbid(unsafe_code)]
+
 use ferrum_core::{
     argmax_rows, mse, softmax_cross_entropy, to_bytes, ModelMetadata, Normalizer, Rng, Sgd,
     TaskType, Tensor,
