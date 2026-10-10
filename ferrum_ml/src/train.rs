@@ -485,8 +485,9 @@ impl Net {
     }
 
     /// Snap every (large-enough) parameter tensor onto the int8 grid in place,
-    /// per output-row (§7) to match the per-channel Ferrum GGUF quantization. 1-D
-    /// parameters fall back to a single scale.
+    /// per output-row. Ferrum's int8 is GGUF Q8_0 (32-element blocks along the
+    /// input axis, f16 scale); per-row scales are a close QAT-noise approximation
+    /// of it. 1-D parameters fall back to a single scale.
     pub(crate) fn fake_quantize_weights(&mut self) {
         for t in self.param_tensors_mut() {
             let channels = if t.shape.len() >= 2 {
