@@ -485,7 +485,7 @@ impl Net {
     }
 
     /// Snap every (large-enough) parameter tensor onto the int8 grid in place,
-    /// per output-row (§7) to match the per-channel FINF v5 quantization. 1-D
+    /// per output-row (§7) to match the per-channel Ferrum GGUF quantization. 1-D
     /// parameters fall back to a single scale.
     pub(crate) fn fake_quantize_weights(&mut self) {
         for t in self.param_tensors_mut() {

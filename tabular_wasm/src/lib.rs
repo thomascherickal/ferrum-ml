@@ -1,6 +1,6 @@
 //! WASM bindings for ferrum tabular models (classification / regression).
 //!
-//! `TabularModel` loads a FINF model trained by `train_cli` and predicts from a
+//! `TabularModel` loads a GGUF model trained by `train_cli` and predicts from a
 //! row of raw feature values (the stored normalizer is applied internally).
 
 #![forbid(unsafe_code)]

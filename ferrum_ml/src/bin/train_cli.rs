@@ -1,14 +1,14 @@
-//! Generic tabular trainer. Accepts any CSV, auto-detects task, trains, exports FINF.
+//! Generic tabular trainer. Accepts any CSV, auto-detects task, trains, exports GGUF.
 //!
 //! Usage:
-//!   train_cli <csv_path> <model_output.bin> [dataset_name] [hidden_size] [epochs]
+//!   train_cli <csv_path> <model_output.gguf> [dataset_name] [hidden_size] [epochs]
 //!
 //! Examples:
-//!   train_cli datasets/tabular/iris.data     models/iris/model.bin      "Iris"        32  500
-//!   train_cli datasets/tabular/wine.csv      models/wine/model.bin      "Wine"        64  600
-//!   train_cli datasets/tabular/diabetes.csv  models/diabetes/model.bin  "Diabetes"    48  600
-//!   train_cli datasets/tabular/titanic.csv   models/titanic/model.bin   "Titanic"     32  500
-//!   train_cli datasets/tabular/housing.csv   models/housing/model.bin   "Housing"     64  400
+//!   train_cli datasets/tabular/iris.data     models/iris/model.gguf      "Iris"        32  500
+//!   train_cli datasets/tabular/wine.csv      models/wine/model.gguf      "Wine"        64  600
+//!   train_cli datasets/tabular/diabetes.csv  models/diabetes/model.gguf  "Diabetes"    48  600
+//!   train_cli datasets/tabular/titanic.csv   models/titanic/model.gguf   "Titanic"     32  500
+//!   train_cli datasets/tabular/housing.csv   models/housing/model.gguf   "Housing"     64  400
 
 #![forbid(unsafe_code)]
 
@@ -37,7 +37,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .collect();
 
     if positional.len() < 3 {
-        eprintln!("usage: train_cli <csv> <model.bin> [name] [hidden] [epochs] [--verbose]");
+        eprintln!("usage: train_cli <csv> <model.gguf> [name] [hidden] [epochs] [--verbose]");
         std::process::exit(1);
     }
     let csv_path = positional[1];

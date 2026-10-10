@@ -1,7 +1,7 @@
 //! End-to-end integration tests — updated for ferrum_core v0.2 API.
 //!
 //! Pipeline under test:
-//!   CSV parse → normalise → train → serialise (FINF v3) → deserialise → infer
+//!   CSV parse → normalise → train → serialise (Ferrum GGUF) → deserialise → infer
 
 use ferrum_core::{
     argmax_rows, from_bytes, mse, softmax_cross_entropy, to_bytes, ModelMetadata, Normalizer, Rng,
@@ -285,7 +285,7 @@ fn mse_loss_decreases_for_regression() {
     );
 }
 
-// ── Serialisation / loader tests (FINF v3) ────────────────────────────────────
+// ── Serialisation / loader tests (Ferrum GGUF) ────────────────────────────────────
 
 #[test]
 fn serialise_deserialise_identical_outputs() {
@@ -331,12 +331,12 @@ fn model_bytes_under_16kb() {
 
 #[test]
 fn corrupt_bytes_rejected() {
-    assert!(from_bytes(b"NOT_A_FINF_FILE").is_err());
+    assert!(from_bytes(b"NOT_A_GGUF_FILE").is_err());
     assert!(from_bytes(&[]).is_err());
 }
 
 #[test]
-fn wrong_finf_version_rejected() {
+fn wrong_gguf_version_rejected() {
     let (net, norm, ds) = trained_iris();
     let model = net.to_inference().unwrap();
     let meta = make_meta(&ds);
@@ -363,7 +363,7 @@ fn try_load_dataset_model(
 
 #[test]
 fn iris_setosa_sample_classifies_correctly() {
-    let Some((model, norm, meta)) = try_load_dataset_model("models/iris/model.bin") else {
+    let Some((model, norm, meta)) = try_load_dataset_model("models/iris/model.gguf") else {
         return;
     };
     assert_eq!(meta.task, TaskType::Classification);
@@ -379,7 +379,7 @@ fn iris_setosa_sample_classifies_correctly() {
 
 #[test]
 fn iris_virginica_sample_classifies_correctly() {
-    let Some((model, norm, _)) = try_load_dataset_model("models/iris/model.bin") else {
+    let Some((model, norm, _)) = try_load_dataset_model("models/iris/model.gguf") else {
         return;
     };
     let raw = Tensor::row(vec![6.3f32, 3.3, 6.0, 2.5]).unwrap();
@@ -395,11 +395,11 @@ fn iris_virginica_sample_classifies_correctly() {
 #[test]
 fn all_dataset_models_load_and_produce_finite_outputs() {
     let paths = [
-        ("models/iris/model.bin", 4usize),
-        ("models/wine/model.bin", 11),
-        ("models/diabetes/model.bin", 8),
-        ("models/titanic/model.bin", 6),
-        ("models/housing/model.bin", 8),
+        ("models/iris/model.gguf", 4usize),
+        ("models/wine/model.gguf", 11),
+        ("models/diabetes/model.gguf", 8),
+        ("models/titanic/model.gguf", 6),
+        ("models/housing/model.gguf", 8),
     ];
     for (path, n_features) in &paths {
         let Some((model, norm, meta)) = try_load_dataset_model(path) else {
@@ -420,10 +420,10 @@ fn all_dataset_models_load_and_produce_finite_outputs() {
 #[test]
 fn classification_outputs_sum_to_one() {
     let clf_paths = [
-        "models/iris/model.bin",
-        "models/wine/model.bin",
-        "models/diabetes/model.bin",
-        "models/titanic/model.bin",
+        "models/iris/model.gguf",
+        "models/wine/model.gguf",
+        "models/diabetes/model.gguf",
+        "models/titanic/model.gguf",
     ];
     for path in &clf_paths {
         let Some((model, norm, meta)) = try_load_dataset_model(path) else {
@@ -457,7 +457,7 @@ fn midpoint_row(meta: &ModelMetadata) -> Tensor {
 
 #[test]
 fn regression_output_is_scalar() {
-    let Some((model, norm, meta)) = try_load_dataset_model("models/housing/model.bin") else {
+    let Some((model, norm, meta)) = try_load_dataset_model("models/housing/model.gguf") else {
         return;
     };
     assert_eq!(meta.task, TaskType::Regression);
@@ -475,7 +475,7 @@ fn regression_output_is_scalar() {
 
 #[test]
 fn batch_inference_matches_individual() {
-    let Some((model, norm, _)) = try_load_dataset_model("models/iris/model.bin") else {
+    let Some((model, norm, _)) = try_load_dataset_model("models/iris/model.gguf") else {
         return;
     };
     let samples = vec![
@@ -592,16 +592,16 @@ fn seeds_dataset_parses() {
 #[test]
 fn all_ten_model_files_load_and_produce_finite_outputs() {
     let configs: &[(&str, usize)] = &[
-        ("models/iris/model.bin", 4),
-        ("models/wine/model.bin", 11),
-        ("models/diabetes/model.bin", 8),
-        ("models/titanic/model.bin", 6),
-        ("models/housing/model.bin", 8),
-        ("models/heart/model.bin", 13),
-        ("models/cancer/model.bin", 30),
-        ("models/penguins/model.bin", 4),
-        ("models/mpg/model.bin", 6),
-        ("models/seeds/model.bin", 7),
+        ("models/iris/model.gguf", 4),
+        ("models/wine/model.gguf", 11),
+        ("models/diabetes/model.gguf", 8),
+        ("models/titanic/model.gguf", 6),
+        ("models/housing/model.gguf", 8),
+        ("models/heart/model.gguf", 13),
+        ("models/cancer/model.gguf", 30),
+        ("models/penguins/model.gguf", 4),
+        ("models/mpg/model.gguf", 6),
+        ("models/seeds/model.gguf", 7),
     ];
     let mut loaded = 0;
     for (path, n_features) in configs {
@@ -628,14 +628,14 @@ fn all_ten_model_files_load_and_produce_finite_outputs() {
 #[test]
 fn all_classification_models_output_valid_distributions() {
     let clf_paths: &[(&str, usize)] = &[
-        ("models/iris/model.bin", 4),
-        ("models/wine/model.bin", 11),
-        ("models/diabetes/model.bin", 8),
-        ("models/titanic/model.bin", 6),
-        ("models/heart/model.bin", 13),
-        ("models/cancer/model.bin", 30),
-        ("models/penguins/model.bin", 4),
-        ("models/seeds/model.bin", 7),
+        ("models/iris/model.gguf", 4),
+        ("models/wine/model.gguf", 11),
+        ("models/diabetes/model.gguf", 8),
+        ("models/titanic/model.gguf", 6),
+        ("models/heart/model.gguf", 13),
+        ("models/cancer/model.gguf", 30),
+        ("models/penguins/model.gguf", 4),
+        ("models/seeds/model.gguf", 7),
     ];
     for (path, n) in clf_paths {
         let Some((model, norm, meta)) = try_load_dataset_model(path) else {
@@ -667,8 +667,8 @@ fn all_classification_models_output_valid_distributions() {
 #[test]
 fn both_regression_models_produce_plausible_values() {
     let reg_configs: &[(&str, usize, f32, f32)] = &[
-        ("models/housing/model.bin", 8, 10_000.0, 10_000_000.0),
-        ("models/mpg/model.bin", 6, 5.0, 60.0),
+        ("models/housing/model.gguf", 8, 10_000.0, 10_000_000.0),
+        ("models/mpg/model.gguf", 6, 5.0, 60.0),
     ];
     for (path, n, lo, hi) in reg_configs {
         let Some((model, norm, meta)) = try_load_dataset_model(path) else {

@@ -1,7 +1,7 @@
 //! # ferrum_ml — tabular machine learning on the ferrum engine
 //!
 //! Train small MLP classifiers and regressors from any numeric CSV, entirely on
-//! CPU with zero external dependencies, and save them as FINF model files that
+//! CPU with zero external dependencies, and save them as GGUF model files that
 //! run natively or in the browser (see the `tabular_wasm` crate).
 //!
 //! - [`CsvDataset`] parses a CSV, detecting the header and the task
