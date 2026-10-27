@@ -5,11 +5,11 @@ MLP classifiers and regressors from any numeric CSV, entirely on the CPU, and
 ship each one as a single self-contained GGUF model file. The model runs
 natively or in a browser.
 
-Ferrum-ML was split out of the [Ferrum](../Ferrum/ReadMe.md) SLM repository on
+Ferrum-ML was split out of the [Ferrum](../ferrum-cpu/ReadMe.md) SLM repository on
 2026-10-03. These demos work well and are useful on their own, but they have
 nothing to do with training language models. They reuse Ferrum's engine
 (tensors, layers, optimizers, quantization, and the GGUF format) through a path
-dependency on `../Ferrum/ferrum_core`. Keep the two folders side by side.
+dependency on `../ferrum-cpu/ferrum_core`. Keep the two folders side by side.
 
 ---
 

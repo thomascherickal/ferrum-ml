@@ -12,4 +12,4 @@ path = "src/bin/train_cli.rs"
 [dependencies]
 # Shared engine (tensors, layers, optimizers, GGUF model files) from the
 # sibling SLM repo.
-ferrum_core = { path = "../../Ferrum/ferrum_core" }
+ferrum_core = { path = "../../ferrum-cpu/ferrum_core" }
